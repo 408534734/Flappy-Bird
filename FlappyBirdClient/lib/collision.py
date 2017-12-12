@@ -76,6 +76,7 @@ def gameOver(gameScene, land_1, land_2, spriteBird, upPipeCollided):
 
     removeMovePipeFunc(gameScene)
     removeCalScoreFunc(gameScene)
+    removeAiControlFunc(gameScene)
     removeBirdTouchHandler(gameScene)
     if upPipeCollided and collision_func:
         gameScene.unschedule(collision_func)

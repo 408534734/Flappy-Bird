@@ -52,8 +52,8 @@ def initGameLayer():
 	gameLayer.add(spriteBird, z=20)
 	# add moving land
 	land_1, land_2 = createLand()#两个相连接地面，不断循环向左移动一个屏宽，再回到原点
-	gameLayer.add(land_1, z=10)
-	gameLayer.add(land_2, z=10)
+	gameLayer.add(land_1, z=10, name="land1")
+	gameLayer.add(land_2, z=10, name="land2")
 	# add gameLayer to gameScene
 	gameScene.add(gameLayer)
 
@@ -110,7 +110,6 @@ def singleGameReady():
 		# ready layer的回调函数
 		def singleGameStart(self, eventType, x, y):
 			isGamseStart = True
-		
 			spriteBird.gravity = gravity #gravity is from bird.py
 			# handling bird touch events
 			addTouchHandler(gameScene, isGamseStart, spriteBird)
@@ -170,7 +169,10 @@ class RestartMenu(Menu):
 		gameScene.remove(gameLayer)
 		initGameLayer()
 		isGamseStart = False
-		singleGameReady()
+		#singleGameReady()
+		difficultyMenu = DifficultyMenu()  # 添加菜单
+		gameLayer.add(difficultyMenu, z=20, name="difficulty_button")
+
 
 class SingleGameStartMenu(Menu):#开始游戏菜单
 	def __init__(self):  
@@ -185,7 +187,13 @@ class SingleGameStartMenu(Menu):#开始游戏菜单
 
 	def gameStart(self):
 		gameLayer.remove("start_button")
-		singleGameReady() 
+		#singleGameReady()
+		difficultyMenu = DifficultyMenu()  # 添加菜单
+		gameLayer.add(difficultyMenu, z=20, name="difficulty_button")
+
+
+difficulty = 1
+aiControl = False
 
 
 class DifficultyMenu(Menu):
@@ -194,9 +202,35 @@ class DifficultyMenu(Menu):
 		self.menu_valign = CENTER
 		self.menu_halign = CENTER
 		items = [  # 添加按钮，与点击按钮触发的对象
-			(ImageMenuItem(common.load_image("button_easy.png"), self.gameEasyStart)),
-			(ImageMenuItem(common.load_image("button_normal.png"), self.gameNormalStart)),
-			(ImageMenuItem(common.load_image("button_hard.png"), self.gameHardStart)),
-			(ImageMenuItem(common.load_image("button_Ai.png"), self.gameAiStart)),
+			(ImageMenuItem(common.load_image("button_easy.png"), self.setGameEasy)),
+			(ImageMenuItem(common.load_image("button_normal.png"), self.setGameNormal)),
+			(ImageMenuItem(common.load_image("button_hard.png"), self.setGameHard)),
+			(ImageMenuItem(common.load_image("button_Ai.png"), self.setGamAi)),
 		]
 		self.create_menu(items, selected_effect=zoom_in(), unselected_effect=zoom_out())
+		global aiControl
+		aiControl= False
+	def setGameEasy(self):
+		global difficulty
+		difficulty = 0.5
+		self.gameReady()
+	def setGameNormal(self):
+		global difficulty
+		difficulty = 1
+		self.gameReady()
+	def setGameHard(self):
+		global difficulty
+		difficulty = 2
+		self.gameReady()
+	def setGamAi(self):
+		global difficulty
+		difficulty = 2
+		global aiControl
+		aiControl= True
+		self.gameReady()
+	def gameReady(self):
+		gameLayer.remove("difficulty_button")
+		land1 = gameLayer.get("land1")
+		land2 = gameLayer.get("land2")
+		setLandSpeed(land1, land2)
+		singleGameReady()
