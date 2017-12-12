@@ -11,7 +11,7 @@ import common
 import random
 
 # constants
-pipeCount = 5
+pipeCount = 2
 pipeHeight = 320
 pipeWidth = 52
 pipeDistance = 100  # 上下管道间的距离
@@ -41,7 +41,7 @@ def createPipes(layer, gameScene, spriteBird, score):
 		for i in range(0, pipeCount):
 			pipeDistance = random.randint(110-20*game_controller.difficulty, 120)
 			heightOffset = random.randint(35-40*game_controller.difficulty, 35+40*game_controller.difficulty)
-			pipeInterval = random.randint(180-14*game_controller.difficulty, 180)
+			pipeInterval = random.randint(200-14*game_controller.difficulty, 200)
 			#把downPipe和upPipe组合为singlePipe
 			downPipe = CollidableRectSprite("pipe_down", 0, (pipeHeight + pipeDistance), pipeWidth/2, pipeHeight/2) #朝下的pipe而非在下方的pipe
 			upPipe = CollidableRectSprite("pipe_up", 0, 0, pipeWidth/2, pipeHeight/2)  #朝上的pipe而非在上方的pipe
@@ -68,7 +68,7 @@ def createPipes(layer, gameScene, spriteBird, score):
 				if next < 0: next = pipeCount - 1
 				pipeDistance = random.randint(110-20*game_controller.difficulty, 120)
 				heightOffset = random.randint(35-40*game_controller.difficulty, 35+40*game_controller.difficulty)
-				pipeInterval = random.randint(180-14*game_controller.difficulty, 180)
+				pipeInterval = random.randint(200-14*game_controller.difficulty, 200)
 				pipeNode.position = (pipes[next].position[0] + pipeInterval, heightOffset)
 				upPipeYPosition[i] = heightOffset + pipeHeight/2
 				downPipeYPosition[i] = heightOffset + pipeHeight/2 + pipeDistance
@@ -76,7 +76,7 @@ def createPipes(layer, gameScene, spriteBird, score):
 
 	def calScore(dt):
 		global g_score
-		birdXPosition = spriteBird.position[0]
+		birdXPosition = spriteBird.position[0]-48
 		for i in range(0, pipeCount):
 			if pipeState[i] == PIPE_NEW and pipes[i].position[0] < birdXPosition:
 				pipeState[i] = PIPE_PASS
@@ -88,11 +88,12 @@ def createPipes(layer, gameScene, spriteBird, score):
 		if game_controller.aiControl == True:
 			nearest = 10000
 			for i in range(pipeCount):
-				if pipeState[i] == PIPE_NEW and nearest > spriteBird.position[0] - pipes[i].position[0]:
-					nearest = spriteBird.position[0] - pipes[i].position[0]
+				if pipeState[i] == PIPE_NEW and nearest > pipes[i].position[0] - spriteBird.position[0]:
+					nearest = pipes[i].position[0] - spriteBird.position[0]
 					nearest_i = i
-			print(upPipeYPosition[nearest_i], downPipeYPosition[nearest_i])
-			if spriteBird.position[1] <= upPipeYPosition[nearest_i] + pipes[nearest_i].position[1]:
+			#print(upPipeYPosition[nearest_i], downPipeYPosition[nearest_i])
+			#spriteBird.position = (spriteBird.position[0], upPipeYPosition[nearest_i]+pipeHeight/2)
+			if spriteBird.position[1] - 25 <= upPipeYPosition[nearest_i]:
 				gameSceneForAi.get("birdTouchHandler").on_mouse_press(None, None, None, None)
 
 	g_score = score
