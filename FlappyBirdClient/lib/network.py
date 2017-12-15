@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket, netstream
-import random
+import game_controller
 import user
 connected = False
 sock = None
@@ -14,17 +14,15 @@ def connect(gameScene):  # 连接服务器
 	if connected:
 		return connected
 	#connect server
-	for i in range(5):
-		host = "127.0.0.1"
-		port = 9234
-		sock = socket.socket()
-		try:
-			sock.connect((host, port))
-		except:
-			print("Connect Fail!")
-			continue
-		connected = True
-		break
+	host = "127.0.0.1"
+	port = 9234
+	sock = socket.socket()
+	try:
+		sock.connect((host, port))
+	except:
+		game_controller.showContent("Connect to Server Failed! :(")
+		return
+	connected = True
 
 	#始终接收服务端消息
 	def receiveServer(dt):
@@ -34,7 +32,6 @@ def connect(gameScene):  # 连接服务器
 		data = netstream.read(sock)
 		if data == netstream.TIMEOUT or data == netstream.CLOSED or data == netstream.EMPTY:
 			return
-		
 		#客户端SID
 		if 'sid' in data:
 			serialID = data['sid']

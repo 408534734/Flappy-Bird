@@ -258,6 +258,7 @@ class LoginMenu(Menu):
 		except:
 			pass
 		global username, password
+		connect(gameScene)  # 连接服务器
 		username = username.encode("ascii")
 		password = password.encode("ascii")
 		user.userLogin(username, password)
@@ -268,6 +269,7 @@ class LoginMenu(Menu):
 		except:
 			pass
 		global username, password
+		connect(gameScene)  # 连接服务器
 		username = username.encode("ascii")
 		password = password.encode("ascii")
 		user.userSignup(username, password)

@@ -70,6 +70,8 @@ def userDataProcess(data):
 		game_controller.showContent("Server receive unknown message")
 	elif data['type'] == "rank":
 		game_controller.showRank(data['rank'])
+	elif data['type'] == "error":
+		game_controller.showContent(data['content'])
 	else:
 		game_controller.showContent("Client receive unknown message")
 
