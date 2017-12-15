@@ -39,9 +39,29 @@ def createPipes(layer, gameScene, spriteBird, score):
 	gameSceneForAi = gameScene
 	def initPipe():
 		for i in range(0, pipeCount):
-			pipeDistance = random.randint(110-20*game_controller.difficulty, 120)
-			heightOffset = random.randint(35-40*game_controller.difficulty, 35+40*game_controller.difficulty)
-			pipeInterval = random.randint(200-14*game_controller.difficulty, 200)
+
+			pipeDistance = random.randint(110 - 20 * game_controller.difficulty, 120)
+			global heightOffset
+			oldOffeset = heightOffset
+			heightOffset = random.randint(75 - 60 * game_controller.difficulty, 75 + 60 * game_controller.difficulty)
+			pipeInterval = random.randint(200 - 40 * game_controller.difficulty, 210)
+			count = 1
+			while True:
+				if heightOffset >= oldOffeset:
+					if pipeInterval - 50 < heightOffset - oldOffeset:
+						pipeInterval = random.randint(200 - 40 * game_controller.difficulty, 250)
+					else:
+						break
+				else:
+					if (pipeInterval - 160) * 2.5 < oldOffeset - heightOffset:
+						pipeInterval = random.randint(200 - 40 * game_controller.difficulty, 250)
+					else:
+						break
+				count += 1
+				if count == 10:
+					pipeInterval = 300
+					break
+
 			#把downPipe和upPipe组合为singlePipe
 			downPipe = CollidableRectSprite("pipe_down", 0, (pipeHeight + pipeDistance), pipeWidth/2, pipeHeight/2) #朝下的pipe而非在下方的pipe
 			upPipe = CollidableRectSprite("pipe_up", 0, 0, pipeWidth/2, pipeHeight/2)  #朝上的pipe而非在上方的pipe
@@ -66,9 +86,29 @@ def createPipes(layer, gameScene, spriteBird, score):
 				pipeState[i] = PIPE_NEW
 				next = i - 1
 				if next < 0: next = pipeCount - 1
+
 				pipeDistance = random.randint(110-20*game_controller.difficulty, 120)
-				heightOffset = random.randint(35-40*game_controller.difficulty, 35+40*game_controller.difficulty)
-				pipeInterval = random.randint(200-14*game_controller.difficulty, 200)
+				global heightOffset
+				oldOffeset = heightOffset
+				heightOffset = random.randint(75-60*game_controller.difficulty, 75+60*game_controller.difficulty)
+				pipeInterval = random.randint(200-40*game_controller.difficulty, 210)
+				count = 1
+				while True:
+					if heightOffset >= oldOffeset :
+						if pipeInterval-50 <  heightOffset - oldOffeset:
+							pipeInterval = random.randint(200 - 40 * game_controller.difficulty, 250)
+						else:
+							break
+					else:
+						if (pipeInterval-160)*2.5 < oldOffeset - heightOffset:
+							pipeInterval = random.randint(200 - 40 * game_controller.difficulty, 250)
+						else:
+							break
+					count += 1
+					if count == 10:
+						pipeInterval = 300
+						break
+
 				pipeNode.position = (pipes[next].position[0] + pipeInterval, heightOffset)
 				upPipeYPosition[i] = heightOffset + pipeHeight/2
 				downPipeYPosition[i] = heightOffset + pipeHeight/2 + pipeDistance

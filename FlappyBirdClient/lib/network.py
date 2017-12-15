@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket, netstream
+import random
+import user
 connected = False
 sock = None
 
@@ -12,15 +14,17 @@ def connect(gameScene):  # 连接服务器
 	if connected:
 		return connected
 	#connect server
-	host = "127.0.0.1"
-	port = 9234
-	sock = socket.socket()
-	try:
-		sock.connect((host, port))
-	except:
-		connected = False
-		return connected
-	connected = True
+	for i in range(5):
+		host = "127.0.0.1"
+		port = 9234
+		sock = socket.socket()
+		try:
+			sock.connect((host, port))
+		except:
+			print("Connect Fail!")
+			continue
+		connected = True
+		break
 
 	#始终接收服务端消息
 	def receiveServer(dt):
@@ -34,10 +38,13 @@ def connect(gameScene):  # 连接服务器
 		#客户端SID
 		if 'sid' in data:
 			serialID = data['sid']
-
+		else:
+			user.userDataProcess(data)
+		'''
 		if 'notice_content' in data:
 			import game_controller
 			game_controller.showContent(data['notice_content']) #showContent is from game_controller
+		'''
 
 	gameScene.schedule(receiveServer)
 	return connected
@@ -50,5 +57,9 @@ def get_send_data():
 #向server请求公告
 def request_notice():
 	send_data = get_send_data()
-	send_data['notice'] = 'request notice'
-	netstream.send(sock, send_data)
+	send_data['type'] = 'notice'
+	clientSend(send_data)
+
+# 向服务器发送数据
+def clientSend(sendData):
+	netstream.send(sock, sendData)

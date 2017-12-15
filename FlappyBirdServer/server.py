@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import socket, select, netstream, random, pickle, os, traceback
+import socket, select, netstream, random, pickle, os, traceback, processData
 
 HOST = "127.0.0.1"
 disconnected_list = []#断开连接的客户端列表
@@ -61,6 +61,9 @@ while inputs:
 
 				else:# 根据收到的request发送response
 					#公告
+					netstream.send(onlineUser[recvData['sid']]['connection'], processData.processData(recvData))
+					break
+					'''
 					if 'notice' in recvData:
 						# 获取通讯中某个属性的值
 						number = recvData['sid']
@@ -68,6 +71,7 @@ while inputs:
 						# 发送数据
 						sendData = {"notice_content": "This is a notice from server. Good luck!"}
 						netstream.send(onlineUser[number]['connection'], sendData)
+					'''
 	except Exception:
 		traceback.print_exc()
 		print 'Error: socket 链接异常'
